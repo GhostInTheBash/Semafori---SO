@@ -15,10 +15,14 @@ typedef struct {
 void Semaphore_init();
 
 Semaphore* Semaphore_alloc(int id, int type);
+
 int Semaphore_free(Semaphore* semaphore);
 
 typedef ListHead SemaphoreList;
 
 Semaphore* SemaphoreList_byId(SemaphoreList* l, int id);
 
+int SemaphoreList_count(SemaphoreList* l);
+
 void SemaphoreList_print(ListHead* l);
+

@@ -146,6 +146,8 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   Timer_init();
   Resource_init();
   Descriptor_init();
+  Semaphore_init();
+  SemDescriptor_init();
   init_pcb=0;
 
   // populate the vector of syscalls and number of arguments for each syscall
@@ -184,7 +186,7 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
 
   // fill these with the syscall handlers
   syscall_vector[DSOS_CALL_SEMOPEN]      = internal_semOpen;
-  syscall_numarg[DSOS_CALL_SEMOPEN]      = 1;
+  syscall_numarg[DSOS_CALL_SEMOPEN]      = 2;
 
   syscall_vector[DSOS_CALL_SEMCLOSE]      = internal_semClose;
   syscall_numarg[DSOS_CALL_SEMCLOSE]      = 1;
@@ -203,7 +205,6 @@ void disastrOS_start(void (*f)(void*), void* f_args, char* logfile){
   List_init(&resources_list);
   List_init(&semaphores_list);
   List_init(&timer_list);
-
 
   /* INITIALIZATION OF SYSCALL AND INTERRUPT INFRASTRUCTIRE*/
   disastrOS_debug("setting entry point for system shudtown... ");
@@ -303,6 +304,24 @@ int disastrOS_closeResource(int fd) {
 
 int disastrOS_destroyResource(int resource_id) {
   return disastrOS_syscall(DSOS_CALL_DESTROY_RESOURCE, resource_id);
+}
+
+// gestisco le chiamate a syscall
+
+int disastrOS_semopen(int resource_id, int count){
+    return disastrOS_syscall(DSOS_CALL_SEMOPEN, resource_id, count);
+}
+
+int disastrOS_semclose(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMCLOSE, resource_id);
+}
+
+int disastrOS_semwait(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMWAIT, resource_id);
+}
+
+int disastrOS_sempost(int resource_id){
+    return disastrOS_syscall(DSOS_CALL_SEMPOST, resource_id);
 }
 
 

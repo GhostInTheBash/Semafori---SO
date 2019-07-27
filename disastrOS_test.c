@@ -5,18 +5,21 @@
 #include "disastrOS.h"
 
 // we need this to handle the sleep state
+
+
+
 void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
   while(1) {
     getc(stdin);
-    disastrOS_printStatus();
+    //disastrOS_printStatus();
   }
 }
 
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
-  int type=0;
+  /*int type=0;
   int mode=0;
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
@@ -26,12 +29,14 @@ void childFunction(void* args){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid())*5);
   }
-  disastrOS_exit(disastrOS_getpid()+1);
+  disastrOS_exit(disastrOS_getpid()+1);*/
+
+  int sem = disastrOS_semopen((disastrOS_getpid())+1, 2);
 }
 
 
 void initFunction(void* args) {
-  disastrOS_printStatus();
+ // disastrOS_printStatus();
   printf("hello, I am init and I just started\n");
   disastrOS_spawn(sleeperFunction, 0);
   
@@ -49,16 +54,16 @@ void initFunction(void* args) {
     alive_children++;
   }
 
-  disastrOS_printStatus();
+  //disastrOS_printStatus();
   int retval;
   int pid;
   while(alive_children>0 && (pid=disastrOS_wait(0, &retval))>=0){ 
-    disastrOS_printStatus();
+    //disastrOS_printStatus();
     printf("initFunction, child: %d terminated, retval:%d, alive: %d \n",
 	   pid, retval, alive_children);
     --alive_children;
   }
-  printf("shutdown!");
+  printf("shutdown!\n");
   disastrOS_shutdown();
 }
 

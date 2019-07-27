@@ -29,6 +29,12 @@
 #define DSOS_ERESOURCECLOSE -12
 #define DSOS_ERESOURCEINUSE -13
 
+// error SemDescriptor
+#define DSOS_ESEMFD -14 
+
+// error SemDescriptorPtr
+#define DSOS_ESEMDESC -15
+
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
 #define DSOS_MAX_SYSCALLS_ARGS 8
