@@ -22,6 +22,11 @@ void internal_semOpen(){
 	if(!sem){
 		printf("Sem non in lista...\n");
 		sem = Semaphore_alloc(id, count);
+		if(!sem){
+			disastrOS_debug("Errore allocazione semaforo\n");
+			running -> syscall_retvalue = DSOS_ESEMALL;
+			return;
+		}
 		printf("Sem allocato\n");
 		List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem);
 		printf("Sem inserito in lista\n");
@@ -35,6 +40,7 @@ void internal_semOpen(){
 	
 	// if error, return with code error -14 (Defined in constant)
 	if(!des){
+		disastrOS_debug("Errore allocazione descrittore semaforo\n");
 		running -> syscall_retvalue = DSOS_ESEMFD;
 		return;
 	}
@@ -51,6 +57,7 @@ void internal_semOpen(){
 	
 	// if error, return with code error -15 (Defined in constant)
 	if(!desptr){
+		disastrOS_debug("Errore allocazione puntatore al descrittore del semaforo\n");
 		running -> syscall_retvalue = DSOS_ESEMDESC;
 		return;
 	}
@@ -59,5 +66,4 @@ void internal_semOpen(){
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) desptr);
 	
 	running -> syscall_retvalue = des -> fd;
-	return;
 }

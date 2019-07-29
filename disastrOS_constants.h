@@ -35,6 +35,9 @@
 // error SemDescriptorPtr
 #define DSOS_ESEMDESC -15
 
+//error SemAlloc
+#define DSOS_ESEMALL -16
+
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
 #define DSOS_MAX_SYSCALLS_ARGS 8

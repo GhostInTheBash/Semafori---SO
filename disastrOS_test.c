@@ -32,6 +32,10 @@ void childFunction(void* args){
   disastrOS_exit(disastrOS_getpid()+1);*/
 
   int sem = disastrOS_semopen((disastrOS_getpid())+1, 2);
+  if(disastrOS_semclose(sem) == 0){
+	  printf("Semaforo chiuso??\n\n");
+  }
+  
 }
 
 
