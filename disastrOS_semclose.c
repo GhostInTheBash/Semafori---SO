@@ -1,3 +1,5 @@
+#define _DISASTROS_DEBUG_
+
 #include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -16,7 +18,7 @@ void internal_semClose(){
     SemDescriptor* sem_des = SemDescriptorList_byFd(&running -> sem_descriptors, sem_fd);
     
     if(!sem_des){
-		disastrOS_debug("Descrittore semaforo no trovato \n");
+		disastrOS_debug("Descrittore semaforo non trovato \n");
 		running -> syscall_retvalue = DSOS_ESEMFD;
 		return;
 	}

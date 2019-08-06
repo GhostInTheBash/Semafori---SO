@@ -1,3 +1,5 @@
+#define _DISASTROS_DEBUG_
+
 #include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -12,9 +14,13 @@
 void internal_semOpen(){
 	
 	printf("Start sem_open\n\n\n");
+	
 	int id = running -> syscall_args[0];
 	int count = running -> syscall_args[1]; //numero di processi che possono accedere al semaforo
-	if(count < 0) count = 1;
+	if(count <= 0){
+		printf("\nContatore del semaforo non può essere negativo, impostato a 1\n\n");
+		count = 1;
+	}
 	
 	//if sem not open yet, alloc it
 	
@@ -38,7 +44,7 @@ void internal_semOpen(){
 	
 	SemDescriptor* des = SemDescriptor_alloc(running -> last_sem_fd, sem, running);
 	
-	// if error, return with code error -14 (Defined in constant)
+	// if error, return with code error (Defined in constant)
 	if(!des){
 		disastrOS_debug("Errore allocazione descrittore semaforo\n");
 		running -> syscall_retvalue = DSOS_ESEMFD;
@@ -55,15 +61,16 @@ void internal_semOpen(){
 	
 	SemDescriptorPtr* desptr = SemDescriptorPtr_alloc(des);
 	
-	// if error, return with code error -15 (Defined in constant)
+	// if error, return with code error (Defined in constant)
 	if(!desptr){
 		disastrOS_debug("Errore allocazione puntatore al descrittore del semaforo\n");
 		running -> syscall_retvalue = DSOS_ESEMDESC;
 		return;
 	}
+	
 	printf("Puntatore allocato\n");
 	des -> ptr = desptr;
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) desptr);
-	
-	running -> syscall_retvalue = des -> fd;
+	printf("Semaforo aperto \n\n");
+	running -> syscall_retvalue = des -> fd; // ritorno il file descriptor del semaforo aperto
 }

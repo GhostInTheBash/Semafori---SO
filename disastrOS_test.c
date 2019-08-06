@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <stdlib.h>
 
 #include "disastrOS.h"
 
@@ -8,7 +9,8 @@
 // we need this to handle the sleep state
 
 // termina quando il processo non ha più figli?? (Vedere disastrOS_wait)
-  void sleeperFunction(void* args){
+
+void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
   while(1) {
     getc(stdin);
@@ -40,14 +42,18 @@ void childFunction(void* args){
   
   disastrOS_printStatus();
   
-  int sem = disastrOS_semopen(1, 0);
-  printf("Inizio la prima semWait su sem %d, fd:%d \n\n", (disastrOS_getpid())+1, sem );
-  disastrOS_semwait(sem);
+  int sem = disastrOS_semopen(1, 1);
+  
+  if(sem)
+	exit(EXIT_FAILURE);
+  
+  if(disastrOS_semwait(sem))
+	exit(EXIT_FAILURE);
   
   accedi_risorsa();
   
-  printf("Inizio SEMPOST\n\n");
-  disastrOS_sempost(sem);
+  if(disastrOS_sempost(sem))
+	exit(EXIT_FAILURE);
   
   disastrOS_printStatus();
   

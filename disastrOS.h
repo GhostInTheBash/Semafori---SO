@@ -9,7 +9,7 @@
 
 #else //_DISASTROS_DEBUG_
 
-#define disastrOS_debug(...) ;
+#define disastrOS_debug(...);
 
 #endif //_DISASTROS_DEBUG_
 
