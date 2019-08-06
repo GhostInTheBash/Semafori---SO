@@ -29,14 +29,17 @@
 #define DSOS_ERESOURCECLOSE -12
 #define DSOS_ERESOURCEINUSE -13
 
+//error GeneralSem
+#define DSOS_ESEMERR -14
+
 // error SemDescriptor
-#define DSOS_ESEMFD -14 
+#define DSOS_ESEMFD -15
 
 // error SemDescriptorPtr
-#define DSOS_ESEMDESC -15
+#define DSOS_ESEMDESC -16
 
 //error SemAlloc
-#define DSOS_ESEMALL -16
+#define DSOS_ESEMALL -17
 
 // syscall numbers
 #define DSOS_MAX_SYSCALLS 32
