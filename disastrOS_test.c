@@ -4,11 +4,11 @@
 
 #include "disastrOS.h"
 
+
 // we need this to handle the sleep state
 
-
-
-void sleeperFunction(void* args){
+// termina quando il processo non ha più figli?? (Vedere disastrOS_wait)
+  void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
   while(1) {
     getc(stdin);
@@ -16,8 +16,16 @@ void sleeperFunction(void* args){
   }
 }
 
+void accedi_risorsa(){
+	printf("Semaforo del processo %d ha accesso alla risorsa\n",(disastrOS_getpid()));
+	disastrOS_printStatus();
+	disastrOS_sleep((20-disastrOS_getpid())*2);
+	disastrOS_printStatus();
+	printf("Semaforo del processo %d lascia la risorsa\n",(disastrOS_getpid()));
+}
+
 void childFunction(void* args){
-  printf("Hello, I am the child function %d\n",disastrOS_getpid());
+  printf("\n\nHELLO, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
   int type=0;
   int mode=0;
@@ -30,14 +38,25 @@ void childFunction(void* args){
     //disastrOS_sleep((20-disastrOS_getpid())*5);
   }
   
-
-  int sem = disastrOS_semopen((disastrOS_getpid())+1, 1);
-  printf("Inizio la semWait\n\n");
+  disastrOS_printStatus();
+  
+  int sem = disastrOS_semopen(1, 0);
+  printf("Inizio la prima semWait su sem %d, fd:%d \n\n", (disastrOS_getpid())+1, sem );
   disastrOS_semwait(sem);
-   disastrOS_semwait(sem);
-    disastrOS_semwait(sem);
+  
+  accedi_risorsa();
+  
+  printf("Inizio SEMPOST\n\n");
+  disastrOS_sempost(sem);
+  
+  disastrOS_printStatus();
+  
+  
   if(disastrOS_semclose(sem) == 0){
-	  printf("Semaforo chiuso??\n\n");
+	  printf("Semaforo chiuso \n\n");
+  }
+  else{
+	  printf("Il semaforo non è chiuso\n\n");
   }
   
   disastrOS_exit(disastrOS_getpid()+1);
@@ -46,14 +65,14 @@ void childFunction(void* args){
 
 
 void initFunction(void* args) {
- // disastrOS_printStatus();
-  printf("hello, I am init and I just started\n");
+  disastrOS_printStatus();
+  printf("hello, I am init and I just started con pid %d\n",disastrOS_getpid());
   disastrOS_spawn(sleeperFunction, 0);
   
 
   printf("I feel like to spawn 10 nice threads\n");
   int alive_children=0;
-  for (int i=0; i<10; ++i) {
+  for (int i=0; i<4; ++i) {
     int type=0;
     int mode=DSOS_CREATE;
     printf("mode: %d\n", mode);
@@ -67,8 +86,9 @@ void initFunction(void* args) {
   //disastrOS_printStatus();
   int retval;
   int pid;
+
   while(alive_children>0 && (pid=disastrOS_wait(0, &retval))>=0){ 
-    //disastrOS_printStatus();
+    disastrOS_printStatus();
     printf("initFunction, child: %d terminated, retval:%d, alive: %d \n",
 	   pid, retval, alive_children);
     --alive_children;
@@ -85,9 +105,9 @@ int main(int argc, char** argv){
   // we create the init process processes
   // the first is in the running variable
   // the others are in the ready queue
-  printf("the function pointer is: %p", childFunction);
+  printf("the function pointer is: %p\n", childFunction);
   // spawn an init process
-  printf("start\n");
+  printf("start \n");
   disastrOS_start(initFunction, 0, logfilename);
   return 0;
 }

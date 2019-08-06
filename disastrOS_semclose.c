@@ -32,13 +32,12 @@ void internal_semClose(){
 	SemDescriptorPtr_free(desptr);
 	
 	if(sem -> descriptors.size == 0){
+		printf("Libero semaforo\n");
 		sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
 		Semaphore_free(sem);
+		running -> syscall_retvalue = 0;
+		return;
 	}
 	
-	
-	running -> syscall_retvalue = 0;
-	 
-    
-    
+	running -> syscall_retvalue = -1;
 }

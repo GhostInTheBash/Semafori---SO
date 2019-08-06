@@ -14,7 +14,7 @@ void internal_semOpen(){
 	printf("Start sem_open\n\n\n");
 	int id = running -> syscall_args[0];
 	int count = running -> syscall_args[1]; //numero di processi che possono accedere al semaforo
-	if(count <= 0) count = 1;
+	if(count < 0) count = 1;
 	
 	//if sem not open yet, alloc it
 	
@@ -61,7 +61,7 @@ void internal_semOpen(){
 		running -> syscall_retvalue = DSOS_ESEMDESC;
 		return;
 	}
-	
+	printf("Puntatore allocato\n");
 	des -> ptr = desptr;
 	List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) desptr);
 	

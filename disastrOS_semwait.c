@@ -17,13 +17,14 @@
  * e va in esecuzione un nuovo processo*/
 
 void internal_semWait(){
-	//fd semaforo da chiudere
-	int sem_fd = running->syscall_args[0];
 	
+	int sem_fd = running->syscall_args[0];
+
 	SemDescriptor* sem_d = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
 	
 	if(!sem_d){
-		disastrOS_debug("Semaforo non trovato \n");
+		printf("NNN\n");
+		disastrOS_debug("Errore sul descrittore\n");
 		running->syscall_retvalue =  DSOS_ESEMFD;
 		return;
 	}
@@ -37,10 +38,7 @@ void internal_semWait(){
 		running->syscall_retvalue =  DSOS_ESEMERR;
 		return;
 	}
-	
-	printf("count: %d  ", sem -> count);
-	sem -> count--;
-	printf("count: %d\n\n", sem -> count);
+
 	SemDescriptorPtr* sem_ptr = sem_d -> ptr;
 	
 	if(!sem_ptr){
@@ -66,6 +64,11 @@ void internal_semWait(){
 		running = p;
 		running->status = Running; 
 	}
+		
+	printf("count: %d  ", sem -> count);
+	sem -> count--;
+	printf("count: %d\n\n", sem -> count);
 	printf("La chiamata alla semWait è terminata\n\n");
+	disastrOS_printStatus();
 	running->syscall_retvalue = 0;
 }
