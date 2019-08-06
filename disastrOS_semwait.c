@@ -54,11 +54,11 @@ void internal_semWait(){
 	if(sem -> count <= 0){
 		printf("Contatore minore di 0, mando un nuovo processo in esecuzione\n\n\n");
 		// rimuovo il descrittore del processo dalla lista dei descrittori(sem->descriptors)
-		List_detach(&sem->descriptors, (ListItem*)sem_ptr); 
+		List_detach(&sem -> descriptors, (ListItem*)sem_ptr); 
 		// inserisco il descrittore in fondo alla lista di waiting
-		List_insert(&sem->waiting_descriptors, sem->waiting_descriptors.last, (ListItem*) sem_d->ptr);
+		List_insert(&sem -> waiting_descriptors, sem -> waiting_descriptors.last, (ListItem*) sem_d->ptr);
 		
-		running->status = Waiting; // nuovo stato del processo 
+		running -> status = Waiting; // nuovo stato del processo 
 		
 		// inserisco il processo in esecuzione nella waiting_list
 		List_insert(&waiting_list, waiting_list.last, (ListItem*) running);
@@ -66,13 +66,13 @@ void internal_semWait(){
 		// prendo e metto in esecuzione il primo elemento della lista di ready
 		PCB* p = (PCB*)List_detach(&ready_list,ready_list.first);
 		running = p;
-		running->status = Running; 
+		running -> status = Running; 
 	}
 		
-	printf("count: %d  ", sem -> count);
 	sem -> count--;
-	printf("count: %d\n\n", sem -> count);
+	
 	printf("La chiamata alla semWait è terminata\n\n");
 	disastrOS_printStatus();
+	
 	running->syscall_retvalue = 0;
 }

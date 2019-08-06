@@ -9,7 +9,7 @@
 #include "disastrOS_semdescriptor.h"
 
 // creates a new semaphore or opens an existing semaphore.
-// oflag not defined, il primo argomento è il nome
+// oflag not defined, il primo argomento è il nome(id)
 
 void internal_semOpen(){
 	
