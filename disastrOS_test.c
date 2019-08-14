@@ -27,10 +27,10 @@ void accedi_risorsa(){
 }
 
 // testo apertura MAX_NUM_SEMDES e varie aperture/chiusure non possibili
-void childFunction(void* args){
+void childFunction2(void* args){
   
   // apro semafori
-  printf("Apro MAX_NUM semafori per il processo\n");
+  printf("\nApro MAX_NUM semafori per il processo\n");
   for(int id = 0; id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; id++){
 	  int sem = disastrOS_semopen(id, 1);
 	  printf("Sem_fd: %d\n",sem);
@@ -51,6 +51,19 @@ void childFunction(void* args){
 	if(sem)
 		disastrOS_exit(EXIT_FAILURE);
   }
+  
+  printf("Chiudo sem mai aperto nel processo\n");
+  int sem_close = disastrOS_semclose(MAX_NUM_SEMDESCRIPTORS_PER_PROCESS);
+  printf("Errore: %d\n",sem_close);
+  
+  printf("\nWait e Post su sem mai aperto nel processo:");
+  int sem_wait = disastrOS_semwait(1);
+  printf("Errore: %d\n", sem_wait);
+  
+  int sem_post = disastrOS_sempost(1);
+  printf("Errore: %d\n\n", sem_post);
+  
+  
   printf("Apro nuovi semafori\n");
   int sem1 = disastrOS_semopen(1,1);
   int sem2 = disastrOS_semopen(2,3);
@@ -78,8 +91,11 @@ void childFunction(void* args){
 
 }
 
-// testo semaforo con contatore negativo
-void childFunction2(void* args){
+// testo semaforo con contatore negativo, più processi accedono con lo stesso
+// semaforo alla risorsa. 
+// Un solo processo per volta può accedere alla risorsa poichè ho contatore pari a 1
+
+void childFunction(void* args){
   
   disastrOS_printStatus();
   

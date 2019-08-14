@@ -17,7 +17,7 @@
 
 void internal_semPost(){
 	
-	printf("\n Inizio semPost \n\n");
+	printf("\nInizio semPost \n\n");
 	
 	int sem_fd = running->syscall_args[0];
 	SemDescriptor* sem_d = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
