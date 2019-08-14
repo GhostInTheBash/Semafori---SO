@@ -5,7 +5,6 @@
 
 #include "disastrOS.h"
 
-
 // we need this to handle the sleep state
 
 // termina quando il processo non ha più figli?? (Vedere disastrOS_wait)
@@ -27,8 +26,7 @@ void accedi_risorsa(){
 }
 
 // testo apertura MAX_NUM_SEMDES e varie aperture/chiusure non possibili
-void childFunction(void* args){
-  
+void childFunction2(void* args){
   // apro semafori
   printf("\nApro MAX_NUM semafori per il processo\n");
   for(int id = 0; id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; id++){
@@ -100,8 +98,7 @@ void childFunction(void* args){
 // semaforo alla risorsa. 
 // Un solo processo per volta può accedere alla risorsa poichè ho contatore pari a 1
 
-void childFunction2(void* args){
-  
+void childFunction(void* args){
   disastrOS_printStatus();
   
   int sem = disastrOS_semopen(1, 1);

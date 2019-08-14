@@ -1,0 +1,38 @@
+Semafori DisastrOS
+
+Il progetto implementa quattro syscall per sincronizzare l'accesso a risorse condivise tra processi.
+
+Come prima cosa viene aggiornato il vettore delle syscall e definite chiamate a syscall.
+Poi implemento le 4 funzioni:
+
+SemOpen(int nome, int count):
+	Crea un nuovo semaforo o aggiunge un fd ad uno esistente
+	Non definisco delle flag
+	'Count' mi dichiara i processi che possono accedere ad un processo simultaneamente
+	è il parametro che viene decrementato nella sem_wait e incrementato nella sem_post
+	Deve essere > 0, se non lo è, viene impostato di default a 1.
+	Ritorna il descrittore associato al semaforo aperto se tutto ok, altrimenti 
+	setta il valore di ritorno ad un errore predefinito (in disastrOS_constant.h)
+	
+SemClose(int fd):
+	Chiude il semaforo esistente con file descriptor 'fd' se non ha più descrittori associati,
+	altrimenti ne libera solamente il file description 'fd'
+	Ritorna -1 se il semaforo non viene chiuso poichè ha associato altri fd,
+			 0 se il semaforo viene eliminato correttamente,
+			 un valore negativo che segnala un errore predefinito (in disastrOS_constant.h)
+
+SemWait(int fd):
+	Decrementa il count del semaforo con file descriptor 'fd'
+	Se il contatore è minore o pari a 0, prima di essere decrementato viene mandato
+	un nuovo processo in esecuzione e imposto lo stato del processo in waiting, 
+	altrimenti viene decrementato e la funzione ritorna.
+	Ritorna 0 se la semwait va a buon fine, altrimenti ritorna un errore predefinito
+
+SemPost(int fd):
+	Incremetna il count del semaforo con file descriptor 'fd'
+	Se il contatore una volta incrementato è minore o pari a 0,(ci sono processi in attesa)
+	un processo in waiting viene messo in running.
+	Ritorna 0 se la sempost va a buon fine, altrimenti ritorna un errore predefinito
+	
+	
+	
