@@ -85,7 +85,7 @@ void internal_semPost(){
         running -> status = Running;
         printf("Cambio stato in running del nuovo processo\n\n");
         disastrOS_printStatus();
-        sleep(300);
+        
     }
 
 	printf("Fine semPost \n\n");

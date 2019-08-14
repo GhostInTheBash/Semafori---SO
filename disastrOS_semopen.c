@@ -11,14 +11,27 @@
 // creates a new semaphore or opens an existing semaphore.
 // oflag not defined, il primo argomento è il nome(id)
 
+/*
+On  success,  sem_open() returns the address of the new semaphore; this
+       address is used when calling  other  semaphore-related  functions.   On
+       error,  sem_open()  returns  SEM_FAILED, with errno set to indicate the
+       error.
+*/
+
 void internal_semOpen(){
 	
 	printf("Start sem_open\n\n\n");
 	
+	if(running -> sem_descriptors.size >= MAX_NUM_SEMDESCRIPTORS_PER_PROCESS){
+		printf("Troppi descrittori per processo \n\n");
+		running->syscall_retvalue = DSOS_ESEM_MAX_NUMBER_OF_SEMDESCRIPTORS; 
+		return;
+    }
+    
 	int id = running -> syscall_args[0];
 	int count = running -> syscall_args[1]; //numero di processi che possono accedere al semaforo
 	if(count <= 0){
-		printf("\nContatore del semaforo non può essere negativo, impostato a 1\n\n");
+		printf("\nContatore del semaforo non può essere <= 0, impostato a 1\n\n");
 		count = 1;
 	}
 	

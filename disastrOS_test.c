@@ -26,19 +26,60 @@ void accedi_risorsa(){
 	printf("Semaforo del processo %d lascia la risorsa\n",(disastrOS_getpid()));
 }
 
+// testo apertura MAX_NUM_SEMDES e varie aperture/chiusure non possibili
 void childFunction(void* args){
-  printf("\n\nHELLO, I am the child function %d\n",disastrOS_getpid());
-  printf("I will iterate a bit, before terminating\n");
-  int type=0;
-  int mode=0;
-  int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
-  printf("fd=%d\n", fd);
-  printf("PID: %d, terminating\n", disastrOS_getpid());
-
-  for (int i=0; i<(disastrOS_getpid()+1); ++i){
-    printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
-    //disastrOS_sleep((20-disastrOS_getpid())*5);
+  
+  // apro semafori
+  printf("Apro MAX_NUM semafori per il processo\n");
+  for(int id = 0; id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; id++){
+	  int sem = disastrOS_semopen(id, 1);
+	  printf("Sem_fd: %d\n",sem);
+	  if(sem < 0){
+		printf("ERRORE, %d\n\n",sem);
+		disastrOS_exit(EXIT_FAILURE);
+	}
   }
+  printf("\n%d semafori aperti\n\n",MAX_NUM_SEMDESCRIPTORS_PER_PROCESS );
+  
+  //apro altro semaforo, errore!
+  printf("Apro semaforo di troppo\n\n");
+  disastrOS_semopen(MAX_NUM_SEMDESCRIPTORS_PER_PROCESS,1);
+  
+  printf("Chiudo semafori aperti\n\n");
+  for(int id = 0; id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; id++){
+	int sem = disastrOS_semclose(id);
+	if(sem)
+		disastrOS_exit(EXIT_FAILURE);
+  }
+  printf("Apro nuovi semafori\n");
+  int sem1 = disastrOS_semopen(1,1);
+  int sem2 = disastrOS_semopen(2,3);
+  int sem3 = disastrOS_semopen(1,1); //stesso id, fd diverso
+  
+  if(sem1 < 0 || sem2 < 0 || sem3 < 0){
+	  printf("Errore\n\n");
+	disastrOS_exit(EXIT_FAILURE);
+}
+  
+  for(int i = 0; i < (disastrOS_getpid()+1); i++){
+	  printf("PID %d, iterate %d\n", disastrOS_getpid(), i);
+	  if(disastrOS_semwait(sem1) || disastrOS_semwait(sem2))
+		disastrOS_exit(EXIT_FAILURE);
+	  // critical section
+     accedi_risorsa();
+      if(disastrOS_sempost(sem2) ||  disastrOS_sempost(sem3))
+		disastrOS_exit(EXIT_FAILURE);
+  }
+  if(disastrOS_semclose(sem1) || disastrOS_semclose(sem2) || disastrOS_semclose(sem3))
+	disastrOS_exit(EXIT_FAILURE);
+
+
+  disastrOS_exit(disastrOS_getpid()+1);
+
+}
+
+// testo semaforo con contatore negativo
+void childFunction2(void* args){
   
   disastrOS_printStatus();
   

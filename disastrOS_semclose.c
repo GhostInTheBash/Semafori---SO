@@ -13,7 +13,7 @@ void internal_semClose(){
 	
     int sem_fd = running -> syscall_args[0];
     
-    printf("Cerco il descrittore nella lista\n\n");
+    printf("Cerco il descrittore nella lista\n");
     
     SemDescriptor* sem_des = SemDescriptorList_byFd(&running -> sem_descriptors, sem_fd);
     
@@ -34,7 +34,7 @@ void internal_semClose(){
 	SemDescriptorPtr_free(desptr);
 	
 	if(sem -> descriptors.size == 0){
-		printf("Libero semaforo\n");
+		printf("Libero semaforo\n\n");
 		sem = (Semaphore*) List_detach(&semaphores_list, (ListItem*) sem);
 		Semaphore_free(sem);
 		running -> syscall_retvalue = 0;

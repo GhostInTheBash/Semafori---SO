@@ -21,7 +21,7 @@
 
 void internal_semWait(){
 	
-	printf("\n\n Inizio semWait \n\n");
+	printf("\n\nInizio semWait \n\n");
 	
 	int sem_fd = running->syscall_args[0];
 
