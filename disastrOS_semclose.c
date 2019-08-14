@@ -8,6 +8,9 @@
 #include "disastrOS_semaphore.h"
 #include "disastrOS_semdescriptor.h"
 
+// on  success sem_close() returns 0; on error, errno
+// is set to indicate the error.
+
 void internal_semClose(){
 	// fd semaforo da chiudere
 	
@@ -41,5 +44,6 @@ void internal_semClose(){
 		return;
 	}
 	
+	// il semaforo non è chiuso, poichè ho ancora descrittori aperti
 	running -> syscall_retvalue = -1;
 }

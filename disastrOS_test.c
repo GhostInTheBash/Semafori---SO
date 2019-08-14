@@ -27,7 +27,7 @@ void accedi_risorsa(){
 }
 
 // testo apertura MAX_NUM_SEMDES e varie aperture/chiusure non possibili
-void childFunction2(void* args){
+void childFunction(void* args){
   
   // apro semafori
   printf("\nApro MAX_NUM semafori per il processo\n");
@@ -46,11 +46,14 @@ void childFunction2(void* args){
   disastrOS_semopen(MAX_NUM_SEMDESCRIPTORS_PER_PROCESS,1);
   
   printf("Chiudo semafori aperti\n\n");
+  disastrOS_printStatus();
   for(int id = 0; id < MAX_NUM_SEMDESCRIPTORS_PER_PROCESS; id++){
 	int sem = disastrOS_semclose(id);
-	if(sem)
-		disastrOS_exit(EXIT_FAILURE);
+	if(sem){
+		printf("Semaforo non chiuso\n");
+	}
   }
+  disastrOS_printStatus();
   
   printf("Chiudo sem mai aperto nel processo\n");
   int sem_close = disastrOS_semclose(MAX_NUM_SEMDESCRIPTORS_PER_PROCESS);
@@ -72,17 +75,19 @@ void childFunction2(void* args){
   if(sem1 < 0 || sem2 < 0 || sem3 < 0){
 	  printf("Errore\n\n");
 	disastrOS_exit(EXIT_FAILURE);
-}
+  }
   
-  for(int i = 0; i < (disastrOS_getpid()+1); i++){
-	  printf("PID %d, iterate %d\n", disastrOS_getpid(), i);
-	  if(disastrOS_semwait(sem1) || disastrOS_semwait(sem2))
-		disastrOS_exit(EXIT_FAILURE);
+  printf("\nPID: %d \n\n", disastrOS_getpid());
+  if(disastrOS_semwait(sem1) || disastrOS_semwait(sem2))
+	disastrOS_exit(EXIT_FAILURE);
+	  
 	  // critical section
      accedi_risorsa();
-      if(disastrOS_sempost(sem2) ||  disastrOS_sempost(sem3))
-		disastrOS_exit(EXIT_FAILURE);
-  }
+      
+   if(disastrOS_sempost(sem2) ||  disastrOS_sempost(sem3))
+     disastrOS_exit(EXIT_FAILURE);
+  
+  
   if(disastrOS_semclose(sem1) || disastrOS_semclose(sem2) || disastrOS_semclose(sem3))
 	disastrOS_exit(EXIT_FAILURE);
 
@@ -95,7 +100,7 @@ void childFunction2(void* args){
 // semaforo alla risorsa. 
 // Un solo processo per volta può accedere alla risorsa poichè ho contatore pari a 1
 
-void childFunction(void* args){
+void childFunction2(void* args){
   
   disastrOS_printStatus();
   
